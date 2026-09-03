@@ -32,42 +32,62 @@ async def home():
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
         <style>
             * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-            body { 
-                background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); 
-                min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; color: #f8fafc; 
+            body {
+                background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+                min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+                align-items: center; padding: 20px; color: #f8fafc;
             }
-            .container { 
-                background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(16px); 
-                border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; 
-                padding: 40px; width: 100%; max-width: 480px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
+            .container {
+                background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(16px);
+                border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px;
+                padding: 40px; width: 100%; max-width: 480px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
             }
             h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-            p.subtitle { font-size: 14px; color: #94a3b8; margin-bottom: 30px; }
-            .drop-zone { 
-                border: 2px dashed #6366f1; border-radius: 12px; padding: 30px 20px; 
-                cursor: pointer; transition: 0.3s; background: rgba(99, 102, 241, 0.05); 
+            p.subtitle { font-size: 14px; color: #94a3b8; margin-bottom: 20px; }
+
+            .notice {
+                display: flex; align-items: flex-start; gap: 10px; text-align: left;
+                background: rgba(250, 204, 21, 0.08); border: 1px solid rgba(250, 204, 21, 0.35);
+                border-radius: 10px; padding: 12px 14px; margin-bottom: 24px;
+            }
+            .notice svg { flex-shrink: 0; width: 20px; height: 20px; fill: #facc15; margin-top: 1px; }
+            .notice p { font-size: 12.5px; color: #fde68a; line-height: 1.5; margin: 0; }
+            .notice strong { color: #fef08a; }
+
+            .drop-zone {
+                border: 2px dashed #6366f1; border-radius: 12px; padding: 30px 20px;
+                cursor: pointer; transition: 0.3s; background: rgba(99, 102, 241, 0.05);
             }
             .drop-zone:hover { background: rgba(99, 102, 241, 0.15); border-color: #818cf8; }
             input[type="file"] { display: none; }
-            .btn { 
-                width: 100%; margin-top: 20px; padding: 14px; border: none; border-radius: 10px; 
-                background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color: white; 
-                font-weight: 600; font-size: 16px; cursor: pointer; transition: 0.3s; 
+            .btn {
+                width: 100%; margin-top: 20px; padding: 14px; border: none; border-radius: 10px;
+                background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color: white;
+                font-weight: 600; font-size: 16px; cursor: pointer; transition: 0.3s;
             }
             .btn:hover { opacity: 0.9; transform: translateY(-1px); }
             #preview-container { display: none; margin-top: 15px; }
-            #preview-img { max-width: 120px; border-radius: 8px; border: 2px solid #818cf8; }
+            #preview-img { max-width: 120px; border-radius: 8px; border: 2px solid #818cf8; background: #fff; padding: 4px; }
+
+            .footer { margin-top: 24px; font-size: 12px; color: #64748b; text-align: center; }
+            .footer span { color: #a5b4fc; font-weight: 600; }
         </style>
     </head>
     <body>
         <div class="container">
             <h1>DigitVision AI</h1>
             <p class="subtitle">Handwritten Digit Classification System</p>
+
+            <div class="notice">
+                <svg viewBox="0 0 24 24"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+                <p><strong>Upload tip:</strong> Please upload an image of a digit (0-9) drawn with a <strong>dark pen/pencil on a plain white background</strong> for the most accurate prediction.</p>
+            </div>
+
             <form action="/predict" method="post" enctype="multipart/form-data">
                 <label for="file-input" class="drop-zone">
                     <div id="upload-prompt">
                         <svg style="width:40px;height:40px;fill:#818cf8;" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-                        <p style="margin-top:8px;font-size:14px;">Click to upload an image of a digit (0-9)</p>
+                        <p style="margin-top:8px;font-size:14px;">Click to upload a white-background digit image</p>
                     </div>
                     <div id="preview-container">
                         <img id="preview-img" src="" alt="Image Preview">
@@ -77,6 +97,9 @@ async def home():
                 <button type="submit" class="btn">Classify Digit</button>
             </form>
         </div>
+
+        <div class="footer">Created by <span>Jahid Hasan</span></div>
+
         <script>
             function showPreview(event) {
                 const file = event.target.files[0];
@@ -105,6 +128,8 @@ async def predict(file: UploadFile = File(...)):
     raw_image_b64 = get_base64_image(raw_image)
 
     # Preprocessing Pipeline (Grayscale -> Invert -> Resize -> Normalize)
+    # NOTE: Assumes a WHITE background image with a dark digit (standard photo/scan),
+    # which is inverted here to match the MNIST-style white-digit-on-black-background format.
     processed_img = ImageOps.grayscale(raw_image)
     processed_img = ImageOps.invert(processed_img)
     processed_img = processed_img.resize((28, 28))
@@ -131,27 +156,30 @@ async def predict(file: UploadFile = File(...)):
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
         <style>
             * {{ box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }}
-            body {{ 
-                background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); 
-                min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; color: #f8fafc; 
+            body {{
+                background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+                min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+                align-items: center; padding: 20px; color: #f8fafc;
             }}
-            .container {{ 
-                background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(16px); 
-                border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; 
-                padding: 40px; width: 100%; max-width: 500px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.4); 
+            .container {{
+                background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(16px);
+                border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px;
+                padding: 40px; width: 100%; max-width: 500px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
             }}
             .digit-badge {{ font-size: 72px; font-weight: 700; color: #22c55e; margin: 10px 0; text-shadow: 0 0 20px rgba(34,197,94,0.4); }}
             .images-grid {{ display: flex; justify-content: space-around; align-items: center; margin: 25px 0; gap: 15px; }}
             .img-card {{ background: rgba(0,0,0,0.2); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); width: 45%; }}
-            .img-card img {{ width: 80px; height: 80px; object-fit: contain; border-radius: 6px; margin-bottom: 6px; }}
+            .img-card img {{ width: 80px; height: 80px; object-fit: contain; border-radius: 6px; margin-bottom: 6px; background: #fff; }}
             .img-card p {{ font-size: 12px; color: #94a3b8; }}
             .progress-bar {{ background: rgba(255,255,255,0.1); height: 10px; border-radius: 5px; overflow: hidden; margin: 15px 0 5px 0; }}
             .progress-fill {{ background: linear-gradient(to right, #6366f1, #22c55e); height: 100%; width: {confidence}%; }}
-            .btn {{ 
-                display: inline-block; width: 100%; margin-top: 20px; padding: 14px; border-radius: 10px; 
-                background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color: white; 
-                font-weight: 600; font-size: 16px; text-decoration: none; box-sizing: border-box; 
+            .btn {{
+                display: inline-block; width: 100%; margin-top: 20px; padding: 14px; border-radius: 10px;
+                background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color: white;
+                font-weight: 600; font-size: 16px; text-decoration: none; box-sizing: border-box;
             }}
+            .footer {{ margin-top: 24px; font-size: 12px; color: #64748b; text-align: center; }}
+            .footer span {{ color: #a5b4fc; font-weight: 600; }}
         </style>
     </head>
     <body>
@@ -177,6 +205,8 @@ async def predict(file: UploadFile = File(...)):
 
             <a href="/" class="btn">Classify Another Image</a>
         </div>
+
+        <div class="footer">Created by <span>Jahid Hasan</span></div>
     </body>
     </html>
     """
