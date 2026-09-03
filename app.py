@@ -33,48 +33,78 @@ async def home():
         <style>
             * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
             body {
-                background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+                background:
+                    radial-gradient(circle at 15% 15%, rgba(99,102,241,0.18), transparent 40%),
+                    radial-gradient(circle at 85% 85%, rgba(168,85,247,0.18), transparent 40%),
+                    linear-gradient(135deg, #0b1023 0%, #171335 100%);
                 min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
-                align-items: center; padding: 20px; color: #f8fafc;
+                align-items: center; padding: 24px; color: #f8fafc;
             }
             .container {
-                background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(16px);
-                border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px;
-                padding: 40px; width: 100%; max-width: 480px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+                background: rgba(255, 255, 255, 0.045); backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.09); border-radius: 24px;
+                padding: 44px 40px; width: 100%; max-width: 460px; text-align: center;
+                box-shadow: 0 25px 60px rgba(0,0,0,0.45);
             }
-            h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; background: linear-gradient(to right, #818cf8, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-            p.subtitle { font-size: 14px; color: #94a3b8; margin-bottom: 20px; }
+            .icon-badge {
+                width: 56px; height: 56px; margin: 0 auto 18px; border-radius: 16px;
+                background: linear-gradient(135deg, #6366f1, #a855f7);
+                display: flex; align-items: center; justify-content: center;
+                box-shadow: 0 10px 25px rgba(99,102,241,0.35);
+            }
+            .icon-badge svg { width: 28px; height: 28px; fill: #fff; }
+            h1 {
+                font-size: 30px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.5px;
+                background: linear-gradient(to right, #a5b4fc, #e9d5ff);
+                -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            }
+            p.subtitle { font-size: 14px; color: #94a3b8; margin-bottom: 24px; }
 
             .notice {
                 display: flex; align-items: flex-start; gap: 10px; text-align: left;
-                background: rgba(250, 204, 21, 0.08); border: 1px solid rgba(250, 204, 21, 0.35);
-                border-radius: 10px; padding: 12px 14px; margin-bottom: 24px;
+                background: rgba(250, 204, 21, 0.08); border: 1px solid rgba(250, 204, 21, 0.3);
+                border-radius: 12px; padding: 14px 16px; margin-bottom: 26px;
             }
-            .notice svg { flex-shrink: 0; width: 20px; height: 20px; fill: #facc15; margin-top: 1px; }
-            .notice p { font-size: 12.5px; color: #fde68a; line-height: 1.5; margin: 0; }
-            .notice strong { color: #fef08a; }
+            .notice svg { flex-shrink: 0; width: 18px; height: 18px; fill: #facc15; margin-top: 2px; }
+            .notice p { font-size: 12.5px; color: #fde68a; line-height: 1.55; margin: 0; }
+            .notice strong { color: #fef9c3; }
 
             .drop-zone {
-                border: 2px dashed #6366f1; border-radius: 12px; padding: 30px 20px;
-                cursor: pointer; transition: 0.3s; background: rgba(99, 102, 241, 0.05);
+                display: flex; flex-direction: column; align-items: center; justify-content: center;
+                gap: 12px; min-height: 160px;
+                border: 2px dashed rgba(129, 140, 248, 0.5); border-radius: 16px; padding: 28px 20px;
+                cursor: pointer; transition: all 0.25s ease; background: rgba(99, 102, 241, 0.04);
             }
-            .drop-zone:hover { background: rgba(99, 102, 241, 0.15); border-color: #818cf8; }
+            .drop-zone:hover { background: rgba(99, 102, 241, 0.12); border-color: #818cf8; transform: translateY(-1px); }
+            .upload-icon-circle {
+                width: 52px; height: 52px; border-radius: 50%;
+                background: rgba(99, 102, 241, 0.15);
+                display: flex; align-items: center; justify-content: center;
+            }
+            .upload-icon-circle svg { width: 24px; height: 24px; fill: #a5b4fc; }
+            .drop-zone p { font-size: 13.5px; color: #cbd5e1; line-height: 1.5; }
+            .drop-zone p.hint { font-size: 11.5px; color: #64748b; margin-top: -4px; }
             input[type="file"] { display: none; }
             .btn {
-                width: 100%; margin-top: 20px; padding: 14px; border: none; border-radius: 10px;
+                width: 100%; margin-top: 22px; padding: 15px; border: none; border-radius: 12px;
                 background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color: white;
-                font-weight: 600; font-size: 16px; cursor: pointer; transition: 0.3s;
+                font-weight: 600; font-size: 15.5px; cursor: pointer; transition: 0.25s;
+                box-shadow: 0 8px 20px rgba(99,102,241,0.3);
             }
-            .btn:hover { opacity: 0.9; transform: translateY(-1px); }
-            #preview-container { display: none; margin-top: 15px; }
-            #preview-img { max-width: 120px; border-radius: 8px; border: 2px solid #818cf8; background: #fff; padding: 4px; }
+            .btn:hover { opacity: 0.92; transform: translateY(-2px); box-shadow: 0 12px 28px rgba(99,102,241,0.4); }
+            #preview-container { display: none; flex-direction: column; align-items: center; gap: 10px; }
+            #preview-img { max-width: 100px; max-height: 100px; border-radius: 10px; border: 2px solid #818cf8; background: #fff; padding: 6px; }
+            #preview-container p { font-size: 12.5px; color: #94a3b8; }
 
-            .footer { margin-top: 24px; font-size: 12px; color: #64748b; text-align: center; }
+            .footer { margin-top: 26px; font-size: 12px; color: #64748b; text-align: center; }
             .footer span { color: #a5b4fc; font-weight: 600; }
         </style>
     </head>
     <body>
         <div class="container">
+            <div class="icon-badge">
+                <svg viewBox="0 0 24 24"><path d="M9 3v2H4v14h16V5h-5V3H9zm3 4a5 5 0 110 10 5 5 0 010-10zm0 2a3 3 0 100 6 3 3 0 000-6z"/></svg>
+            </div>
             <h1>DigitVision AI</h1>
             <p class="subtitle">Handwritten Digit Classification System</p>
 
@@ -85,12 +115,16 @@ async def home():
 
             <form action="/predict" method="post" enctype="multipart/form-data">
                 <label for="file-input" class="drop-zone">
-                    <div id="upload-prompt">
-                        <svg style="width:40px;height:40px;fill:#818cf8;" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-                        <p style="margin-top:8px;font-size:14px;">Click to upload a white-background digit image</p>
+                    <div id="upload-prompt" style="display:flex;flex-direction:column;align-items:center;gap:12px;">
+                        <div class="upload-icon-circle">
+                            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                        </div>
+                        <p>Click to upload a digit image</p>
+                        <p class="hint">White background &middot; dark digit &middot; PNG or JPG</p>
                     </div>
                     <div id="preview-container">
                         <img id="preview-img" src="" alt="Image Preview">
+                        <p>Click to change image</p>
                     </div>
                 </label>
                 <input id="file-input" type="file" name="file" accept="image/*" required onchange="showPreview(event)">
@@ -107,7 +141,7 @@ async def home():
                     const reader = new FileReader();
                     reader.onload = function(e) {
                         document.getElementById('preview-img').src = e.target.result;
-                        document.getElementById('preview-container').style.display = 'block';
+                        document.getElementById('preview-container').style.display = 'flex';
                         document.getElementById('upload-prompt').style.display = 'none';
                     }
                     reader.readAsDataURL(file);
@@ -157,40 +191,58 @@ async def predict(file: UploadFile = File(...)):
         <style>
             * {{ box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }}
             body {{
-                background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+                background:
+                    radial-gradient(circle at 15% 15%, rgba(99,102,241,0.18), transparent 40%),
+                    radial-gradient(circle at 85% 85%, rgba(168,85,247,0.18), transparent 40%),
+                    linear-gradient(135deg, #0b1023 0%, #171335 100%);
                 min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
-                align-items: center; padding: 20px; color: #f8fafc;
+                align-items: center; padding: 24px; color: #f8fafc;
             }}
             .container {{
-                background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(16px);
-                border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px;
-                padding: 40px; width: 100%; max-width: 500px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+                background: rgba(255, 255, 255, 0.045); backdrop-filter: blur(20px);
+                border: 1px solid rgba(255, 255, 255, 0.09); border-radius: 24px;
+                padding: 44px 40px; width: 100%; max-width: 480px; text-align: center;
+                box-shadow: 0 25px 60px rgba(0,0,0,0.45);
             }}
-            .digit-badge {{ font-size: 72px; font-weight: 700; color: #22c55e; margin: 10px 0; text-shadow: 0 0 20px rgba(34,197,94,0.4); }}
-            .images-grid {{ display: flex; justify-content: space-around; align-items: center; margin: 25px 0; gap: 15px; }}
-            .img-card {{ background: rgba(0,0,0,0.2); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); width: 45%; }}
-            .img-card img {{ width: 80px; height: 80px; object-fit: contain; border-radius: 6px; margin-bottom: 6px; background: #fff; }}
-            .img-card p {{ font-size: 12px; color: #94a3b8; }}
-            .progress-bar {{ background: rgba(255,255,255,0.1); height: 10px; border-radius: 5px; overflow: hidden; margin: 15px 0 5px 0; }}
-            .progress-fill {{ background: linear-gradient(to right, #6366f1, #22c55e); height: 100%; width: {confidence}%; }}
+            .badge-label {{
+                display: inline-block; font-size: 12px; letter-spacing: 0.5px; text-transform: uppercase;
+                color: #a5b4fc; background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.3);
+                padding: 5px 14px; border-radius: 999px; margin-bottom: 18px;
+            }}
+            .digit-badge {{
+                font-size: 84px; font-weight: 700; line-height: 1; color: #4ade80; margin: 4px 0 18px;
+                text-shadow: 0 0 30px rgba(74,222,128,0.45);
+            }}
+            .images-grid {{ display: flex; justify-content: center; align-items: stretch; margin: 26px 0; gap: 16px; }}
+            .img-card {{
+                background: rgba(0,0,0,0.25); padding: 14px; border-radius: 14px;
+                border: 1px solid rgba(255,255,255,0.07); width: 130px;
+            }}
+            .img-card img {{ width: 90px; height: 90px; object-fit: contain; border-radius: 8px; margin-bottom: 8px; background: #fff; }}
+            .img-card p {{ font-size: 11.5px; color: #94a3b8; }}
+            .progress-bar {{ background: rgba(255,255,255,0.1); height: 10px; border-radius: 5px; overflow: hidden; margin: 6px 0 8px 0; }}
+            .progress-fill {{ background: linear-gradient(to right, #6366f1, #4ade80); height: 100%; width: {confidence}%; transition: width 0.4s ease; }}
+            .confidence-text {{ font-size: 14px; color: #cbd5e1; margin-bottom: 4px; }}
             .btn {{
-                display: inline-block; width: 100%; margin-top: 20px; padding: 14px; border-radius: 10px;
+                display: inline-block; width: 100%; margin-top: 24px; padding: 15px; border-radius: 12px;
                 background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); color: white;
-                font-weight: 600; font-size: 16px; text-decoration: none; box-sizing: border-box;
+                font-weight: 600; font-size: 15.5px; text-decoration: none; box-sizing: border-box;
+                box-shadow: 0 8px 20px rgba(99,102,241,0.3); transition: 0.25s;
             }}
-            .footer {{ margin-top: 24px; font-size: 12px; color: #64748b; text-align: center; }}
+            .btn:hover {{ opacity: 0.92; transform: translateY(-2px); box-shadow: 0 12px 28px rgba(99,102,241,0.4); }}
+            .footer {{ margin-top: 26px; font-size: 12px; color: #64748b; text-align: center; }}
             .footer span {{ color: #a5b4fc; font-weight: 600; }}
         </style>
     </head>
     <body>
         <div class="container">
-            <h2 style="font-size:18px; color:#94a3b8; font-weight:400;">Predicted Digit</h2>
+            <span class="badge-label">Prediction Result</span>
             <div class="digit-badge">{predicted_digit}</div>
 
+            <div class="confidence-text">Confidence: <strong>{confidence}%</strong></div>
             <div class="progress-bar">
                 <div class="progress-fill"></div>
             </div>
-            <p style="font-size: 14px; color: #cbd5e1;">Confidence: <strong>{confidence}%</strong></p>
 
             <div class="images-grid">
                 <div class="img-card">
